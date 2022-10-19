@@ -1,5 +1,4 @@
 import numpy as np
-from numba import jit, f8, i4
 
 from bspline.base import value, coefficients
 
@@ -175,8 +174,6 @@ class Lspia(object):
         """
         return self.t
 
-
-@jit(f8[:, :](f8[:, :], i4, f8[:], f8[:, :], f8[:]), nopython=True)
 def calc_delta(Q, p, knots, P, t):
     """現在の軌道と近似される点との誤差を計算します
 
@@ -195,8 +192,6 @@ def calc_delta(Q, p, knots, P, t):
         delta[i] = Q[i] - value(p, knots, P, t[i])
     return delta
 
-
-@jit(f8[:, :](f8, f8[:, :], f8[:, :]), nopython=True)
 def calc_move(myu, A, delta):
     """制御点の移動量を計算します
 
@@ -216,8 +211,6 @@ def calc_move(myu, A, delta):
             moves[i] += myu * A[j, i] * delta[j]
     return moves
 
-
-@jit(f8[:](f8[:, :]), nopython=True)
 def create_ordered_point_param(Q):
     """近似すべき点のパラメータを生成します
 
@@ -236,8 +229,6 @@ def create_ordered_point_param(Q):
         param[i+1] = param[i] + np.sqrt(np.sum((Q[i] - Q[i+1]) ** 2))
     return param / param[-1]
 
-
-@jit(f8[:](i4, i4, f8[:]), nopython=True)
 def create_knot_vector(n, p, param):
     """ノットベクトルを作成します
 
@@ -267,8 +258,6 @@ def create_knot_vector(n, p, param):
     result[n + 1:] = np.ones(p + 1)
     return result
 
-
-@jit(f8[:, :](f8[:, :], i4), nopython=True)
 def create_default_P(Q, n):
     """制御点Pを作成するための初期値の計算を行います
 
@@ -289,8 +278,6 @@ def create_default_P(Q, n):
         result[i] = Q[int(np.round(m / n * i))]
     return result
 
-
-@jit(f8[:, :](f8[:], f8[:], i4, i4, i4), nopython=True)
 def create_collocation_matrix(t, knots, m, n, p):
     """Bスプライン基底関数を用いて行列を作成します
 
@@ -307,8 +294,6 @@ def create_collocation_matrix(t, knots, m, n, p):
         result[i] = coefficients(n, p, knots, t[i])
     return result
 
-
-@jit(f8(f8[:, :]), nopython=True, locals=dict(n=i4, t=f8[:, :], a=f8[:]))
 def create_appropriate_weight(A):
     """Collocation matrixから、解に近づけていくための係数である\myuを計算します
 

@@ -8,7 +8,7 @@ B-spline関数は、
 それらのアルゴリズムを提供します.
 """
 import numpy as np
-from numba import jit, f8, i4
+
 from bspline.base import BSpline
 
 
@@ -118,8 +118,6 @@ def create_deboor_net(bspline, t, k):
                         a[r][i] * Ps[r - 1][i])
     return Ps
 
-
-@jit(i4(f8[:], f8), nopython=True)
 def calc_divide_index(knots, t):
     """軌道分割における，どの部分にノットを差し込むかを表すindexを計算します.
 
