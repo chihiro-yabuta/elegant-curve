@@ -165,7 +165,7 @@ def write_result(original, param, p, knots, ctrls, output):
             f.write(dst_string)
 
 
-def approximate(p, ipath, opath, log):
+def approximate(p, ipath, opath, average_error, lr):
     """Approximate a trajectory.
 
     B-spline関数の次数、入力ファイルパス、出力ファイルパスをもとに近似を行います.
@@ -179,38 +179,37 @@ def approximate(p, ipath, opath, log):
         log (bool): If you need .log file, set True
     """
     traj = load(ipath)
-    average_error = 0.001
     obj_err = average_error * len(traj)
     lspia = bspline.lspia.Lspia(
         traj[:, 1:],
         p,
         obj_err,
-        average_error * 1e-3
+        average_error * lr
     )
-    if log and opath is not None:
-        logpath = os.path.splitext(opath)[0] + ".log"
-        if not os.path.exists(os.path.dirname(logpath)):
-            os.makedirs(os.path.dirname(logpath))
-        with open(logpath, "w") as f:
-            pass
-        count = 0
-        for p, knots, ctrls, err in lspia.run():
-            with open(logpath, "a") as f:
-                log_string = "{0}\t{1}\t{2}\t{3}\n".format(
-                    str(ctrls.shape[0] - 1),
-                    str(err),
-                    ",".join([str(knot_elem) for knot_elem in knots]),
-                    ",".join([
-                        str(elem_P_reshaped)
-                        for elem_P_reshaped in np.reshape(ctrls, (1, -1))[0]
-                    ])
-                )
-                f.write(log_string)
-                f.flush()
-            count += 1
-    else:
-        for p, knots, ctrls, err in lspia.run():
-            pass
+    # if False and opath is not None:
+    #     logpath = os.path.splitext(opath)[0] + ".log"
+    #     if not os.path.exists(os.path.dirname(logpath)):
+    #         os.makedirs(os.path.dirname(logpath))
+    #     with open(logpath, "w") as f:
+    #         pass
+    #     count = 0
+    #     for p, knots, ctrls, err in lspia.run():
+    #         with open(logpath, "a") as f:
+    #             log_string = "{0}\t{1}\t{2}\t{3}\n".format(
+    #                 str(ctrls.shape[0] - 1),
+    #                 str(err),
+    #                 ",".join([str(knot_elem) for knot_elem in knots]),
+    #                 ",".join([
+    #                     str(elem_P_reshaped)
+    #                     for elem_P_reshaped in np.reshape(ctrls, (1, -1))[0]
+    #                 ])
+    #             )
+    #             f.write(log_string)
+    #             f.flush()
+    #         count += 1
+    # else:
+    for p, knots, ctrls, err in lspia.run():
+        pass
     write_result(
         traj,
         lspia.get_params(),
