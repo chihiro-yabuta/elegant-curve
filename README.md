@@ -21,7 +21,7 @@
 ### Step1: docker をインストールしましょう
 ここからdockerをインストールします
 
->https://genchan.net/it/virtualization/docker/13550/
+>https://docs.docker.com/desktop/mac/apple-silicon/
 
 こちらM1 Macbook Air用なので各々調べて下さい
 
