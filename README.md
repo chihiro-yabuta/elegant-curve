@@ -1,8 +1,7 @@
 ## 簡単な説明でわかる方
 こちら私の記事です 一通りやり方書いてます
 
->https://qiita.com/chihiro-yabuta/items/72e4a1869e9196ca9a67<br>
-
+>https://qiita.com/chihiro-yabuta/items/72e4a1869e9196ca9a67
 
 ## 詳細な説明が必要な方（上田研の方
 ### Step0: csvファイル、ディレクトリを準備しましょう
@@ -19,10 +18,14 @@
 │   ├── *.json (jsonファイルがここに出力されます)
 </pre>
 
-### Step1: docker をインストールしましょう<br>
+### Step1: docker をインストールしましょう
 ここからdockerをインストールします
 
 >https://genchan.net/it/virtualization/docker/13550/
+
+こちらM1 Macbook Air用なので各々調べて下さい
+
+![version](git/version.png)
 
 インストールできたらアプリを立ち上げておきましょう<br>
 docker desktop を立ち上げないと docker は動かせません
@@ -65,7 +68,7 @@ attach できたら
 python main.py
 ```
 
-で走らせましょう<br>
+で走らせましょう
 
 ![run](git/run.png)
 
