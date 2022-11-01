@@ -1,7 +1,6 @@
 import numpy as np
 import scipy.integrate as si
 
-
 class Curvature:
     """ある2次元軌道の曲率を表します
 
@@ -43,7 +42,6 @@ class Curvature:
             float: 軌道の曲率
         """
         return self(t)
-
 
 class TotalCurvature:
     """ある関数の全曲率を計算します．

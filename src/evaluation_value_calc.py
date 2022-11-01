@@ -1,41 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 '''
     美の線要素の評価値を計算するプログラム
     ホガースカーブとの類似度と両弧の弧長の比を考慮した式
     〜.py 〜.csv（類似度が入ったファイル） ~tca.json
 '''
 
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import math
 import json
-import sys
-args = sys.argv
 
-def evaluation_value_calc(ipath):
-    data_frame = pd.read_csv(ipath, header=None)
+def value_calc(ipath, rpath):
+    data_frame = pd.read_csv(ipath, header=0)
     data_array = data_frame.values.astype(float)
-    json_tca = open('json/result.json', 'r')
+    json_tca = open(rpath, 'r')
     json_data = json.load(json_tca)#jsonファイルを計算できる形する
-
     n = 0
     #弧長と両弧の比を考慮した評価値の計算
     for i in range(0, len(json_data['total_curvature_analysis']['curves'])):
-        t_n = 0
         t_or_f = str(json_data['total_curvature_analysis']['curves'][i]['is_valid'])# 美の線ですか?
         print(t_or_f)
         if t_or_f == 'True'or 'False':
-            data_frame = pd.read_csv(args[1], header=None)
+            data_frame = pd.read_csv(ipath, header=0)
             data_array = data_frame.values.astype(float)
-            json_tca = open(args[2], 'r')
+            json_tca = open(rpath, 'r')
             json_data = json.load(json_tca)#jsonファイルを計算できる形する
             l1 = json_data['total_curvature_analysis']['curves'][i]['arcs'][0]['trim_length']#美の線前半の弧長
             l2 = json_data['total_curvature_analysis']['curves'][i]['arcs'][1]['trim_length']#美の線後半の弧長
-            
+
             if data_array[(n, 0)] == 'nan' or data_array[(n, 1)] == 'nan':
                 print(0)
             else:

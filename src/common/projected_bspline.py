@@ -8,7 +8,6 @@ Note:
 """
 import numpy as np
 
-
 class ProjectedBSpline:
     """ 面に投影されたBSpline軌道を表す
 
@@ -88,7 +87,6 @@ class ProjectedBSpline:
             self.axis
         )
 
-
 class Curvature:
     """投影面上の軌道が有する曲率を表す関数オブジェクト.
 
@@ -119,5 +117,3 @@ class Curvature:
         ddiff = self.dd(t)
         return ((dif[0] * ddiff[1] - dif[1] * ddiff[0]) /
                 (dif[0] ** 2 + dif[1] ** 2) ** 1.5)
-
-    

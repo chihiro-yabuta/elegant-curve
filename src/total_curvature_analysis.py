@@ -155,18 +155,15 @@ Usage:
 Options:
     -h, --help  Show this help
 """
-import csv
-import os
-import sys
 import json
 import numpy as np
+from tqdm import tqdm
 import scipy.optimize as so
 import scipy.integrate as si
-import bspline.base as bspline
-import src.projected_bspline as pb
-import total_curvature
-import viewport.viewport as vp
-
+from .bspline.base import BSpline
+from .common.projected_bspline import ProjectedBSpline
+from .common.total_curvature import Curvature, TotalCurvature
+from .common.viewport import get_plane_matrix
 
 UNDER_TOTAL_CURVATURE = np.deg2rad(50.0)
 """float: 取り出す全曲率の下限値
@@ -175,8 +172,7 @@ UNDER_TOTAL_CURVATURE = np.deg2rad(50.0)
 BEST_TOTAL_CURVATURE = np.deg2rad(75.0)
 """float: 全曲率がこの値になるように取り出されます．
 """
-cr_num = 0;
-
+cr_num = 0
 
 class SecondDimensionalize:
     """３次元軌道を2次元上に落とします
@@ -214,7 +210,6 @@ class SecondDimensionalize:
             SecondDimensionalize(self.func.diff())
         )
 
-
 def get_dances():
     """舞踊名のリストを返します
 
@@ -229,7 +224,6 @@ def get_dances():
         "nichibu",
         "pepper"
     ]
-
 
 def build_viewport_axis_str(dancename):
     """舞踊名から投影平面を返します.
@@ -274,7 +268,6 @@ def get_dancename(filename):
         if d in filename:
             return d
 
-
 def get_viewport_axis(filename):
     """視点方向の行列を返します
 
@@ -286,12 +279,11 @@ def get_viewport_axis(filename):
     """
     dancename = get_dancename(filename.lower())
     axis_str = build_viewport_axis_str(dancename)
-    axis_matrix = vp.get_plane_matrix(axis_str)
+    axis_matrix = get_plane_matrix(axis_str)
     return np.r_[
         axis_matrix,
         [np.cross(axis_matrix[0], axis_matrix[1])]
     ]
-
 
 def load_json(filename):
     """jsonファイルのロード
@@ -304,7 +296,6 @@ def load_json(filename):
     """
     with open(filename) as f:
         return json.load(f)
-
 
 def calc_inflection_points(pbsp, trange=None, n_splits=None, ts=None):
     """変曲点を計算します
@@ -321,7 +312,7 @@ def calc_inflection_points(pbsp, trange=None, n_splits=None, ts=None):
     Returns:
         List[float]: 変曲点の媒介変数位置
     """
-    cf = total_curvature.Curvature(pbsp)
+    cf = Curvature(pbsp)
     if ts is None:
         if trange is None:
             trange = (0.0, 1.0)
@@ -329,13 +320,12 @@ def calc_inflection_points(pbsp, trange=None, n_splits=None, ts=None):
             n_splits = 100000
         ts = np.linspace(trange[0], trange[1], n_splits)
     dsts = []
-    for a, b in zip(ts, ts[1:]):
+    for a, b in tqdm(zip(ts, ts[1:])):
         try:
             dsts.append(so.brentq(cf, a, b))
         except ValueError as e:
             pass
     return dsts
-
 
 def search_trim_point(total_curvature_func, ts):
     """ 軌道中から、切り取るべきポイントを探します
@@ -346,7 +336,6 @@ def search_trim_point(total_curvature_func, ts):
         ts (list[float]): 探索範囲
     """
     return so.brentq(total_curvature_func, ts[0], ts[1])
-
 
 def calc_length(pbsp, trange):
     """軌道の長さを計算します.
@@ -362,7 +351,6 @@ def calc_length(pbsp, trange):
     length_func = (lambda t: np.sum(diff(t) * diff(t)) ** 0.5)
     length, err = si.quad(length_func, trange[0], trange[1], limit=10000)
     return length
-
 
 def set_length_field(func, arc_dict):
     """ある解析結果について、長さに関するフィールドを埋めます
@@ -382,7 +370,6 @@ def set_length_field(func, arc_dict):
     arc_dict["trim_length"] = calc_length(func, arc_dict["trim_ts"])
     return arc_dict
 
-
 def curve_analysis(pbsp, tb, tc, te):
     """ある軌道(S字状カーブ)を解析します
 
@@ -395,7 +382,7 @@ def curve_analysis(pbsp, tb, tc, te):
     Returns:
         dict: 解析結果を格納したディクショナリ
     """
-    total_curvature_func = total_curvature.TotalCurvature(pbsp)
+    total_curvature_func = TotalCurvature(pbsp)
     curve = {
         "ts": (tb, tc, te),
         "is_valid": None,
@@ -463,7 +450,6 @@ def curve_analysis(pbsp, tb, tc, te):
     curve["arcs"].append(arc_end)
     return curve
 
-
 def analysis(pbsp):
     """軌道データ全体を解析します
 
@@ -485,13 +471,12 @@ def analysis(pbsp):
         inf_points.insert(0, 0.0)
     if 1.0 not in inf_points:
         inf_points.append(1.0)
-    for tb, tc, te in zip(inf_points, inf_points[1:], inf_points[2:]):
+    for tb, tc, te in tqdm(zip(inf_points, inf_points[1:], inf_points[2:])):
         dst["curves"].append(
              curve_analysis(pbsp, tb, tc, te)
         )
     cr_num = len(dst["curves"])
     return dst
-
 
 def build_bspline(bspline_dict):
     """Bspline関数を構築します
@@ -502,14 +487,13 @@ def build_bspline(bspline_dict):
     Returns:
         bspline.base.BSpline: 軌道
     """
-    return bspline.BSpline(
+    return BSpline(
         int(bspline_dict["degree"]),
         np.array(bspline_dict["knot_vector"]),
         np.array(bspline_dict["control_point"])
     )
 
-
-def main(ipath, opath):
+def analyze_curvature(opath, rpath):
     """main関数
 
     Args:
@@ -517,29 +501,20 @@ def main(ipath, opath):
         output_arg (str): 出力ファイルもしくはディレクトリ
     """
     global cr_num
-    json_data = load_json(ipath)
-    parameter = json_data["bspline"]["parameter"] 
+    json_data = load_json(opath)
     traj_func = SecondDimensionalize(
-        pb.ProjectedBSpline(
+        ProjectedBSpline(
             build_bspline(json_data["bspline"]),
-            get_viewport_axis(ipath)
+            get_viewport_axis(opath)
         )
     )
-    
-    pbb =pb.ProjectedBSpline(build_bspline(json_data["bspline"]),get_viewport_axis("json/result.json"))
-    path = ipath.replace('.json', '')
-    with open(f'{path}.csv', 'w') as f:
-        writer = csv.writer(f)
-        for i in range(len(parameter)):
-            writer.writerow(pbb(parameter[i]))
-
 
     result = analysis(traj_func)
     result["axis"] = traj_func.func.axis.tolist()
     json_data["total_curvature_analysis"] = result
-    with open("json/result.json", "w", encoding="utf-8") as f:
+    with open(rpath, "w", encoding="utf-8") as f:
         json.dump(json_data, f, sort_keys=True, indent=4)
-        
+
     print(json_data.get("total_curvature"))
     '''
     count = 0
@@ -556,7 +531,7 @@ def main(ipath, opath):
     #print(str(len(["inflection_points"][i])))
     # print(json_data["total_curvature_analysis"]["curves"][0]["arcs"][0]["original_length"])
     #print(json_data["total_curvature_analysis"]["curves"])
-    ''' 
+    '''
     dst_string = json.dumps(json_data, sort_keys=True, indent=4)
     if o is None:
         print(dst_string)
@@ -566,6 +541,3 @@ def main(ipath, opath):
         with open(o, "w") as f:
             f.write(dst_string)
     '''
-
-if __name__ == '__main__':
-    main()

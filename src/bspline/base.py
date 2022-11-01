@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Define the base of b-spline curve.
 
 B-spline関数に関する基本的な計算をまるっとまとめたモジュール.

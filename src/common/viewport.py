@@ -3,7 +3,6 @@
 import numpy as np
 import re
 
-
 def get_plane_matrix(plane_str):
     """視点平面を表す文字列から，平面を表す行列を計算します
 
@@ -27,7 +26,6 @@ def get_plane_matrix(plane_str):
     for a in axis:
         vectors.append(get_axis_vector(a))
     return np.array(vectors)
-
 
 def get_axis_vector(axis_str):
     """軸を表す文字列から，軸を表すベクトルを返します

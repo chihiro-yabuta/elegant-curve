@@ -328,11 +328,8 @@ def calculate_knot_interval_error(t, knot, error):
     Returns:
         array: ノット間ごとの誤差, ノット間に格納された曲線のパラメータのテーブル.
     """
-    ts = np.array([
-        [
-            i for i, te in enumerate(t) if k1 <= te <= k2
-        ] for k1, k2 in zip(knot, knot[1:])
-    ])
+    ts = [[ i for i, te in enumerate(t) if k1 <= te <= k2
+      ] for k1, k2 in zip(knot, knot[1:])]
     return np.array([np.sum(error[te]) for te in ts]), ts
 
 def calcurate_inserted_knot(t, knots, delta_norm):
