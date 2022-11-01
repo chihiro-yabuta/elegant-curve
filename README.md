@@ -30,7 +30,7 @@
 ![version](git/version.png)
 
 インストールできたらアプリを立ち上げておきましょう<br>
-docker desktop を立ち上げないと docker は動かせません
+docker desktopを立ち上げないとdockerは動かせません
 
 ### Step2: vscode に拡張機能をインストールしましょう
 この二つインストールして下さい<br>
@@ -41,7 +41,7 @@ vscodeは調べてインストールして下さい
 
 ### Step3: clone しましょう
 リポジトリをclone (zip downloadでも構いません) しましょう<br>
-git は既にmacに入っていると思うのでターミナルを立ち上げて
+gitは既にmacに入っていると思うのでターミナルを立ち上げて
 
 ```
 git clone https://github.com/chihiro-yabuta/elegant-curve.git
@@ -50,7 +50,7 @@ git clone https://github.com/chihiro-yabuta/elegant-curve.git
 を叩きましょう
 
 ### Step4: コンテナを立ち上げましょう
-clone したディレクトリを開いて
+cloneしたディレクトリを開いて
 
 ```
 docker compose up -d
@@ -60,11 +60,11 @@ docker compose up -d
 
 ![build](git/build.png)
 
-立ち上がったら container に attach しましょう
+立ち上がったらcontainerにattachしましょう
 
 ![attach](git/attach.png)
 
-attach できたら
+attachできたら
 
 ```
 python main.py
