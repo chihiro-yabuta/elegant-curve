@@ -163,7 +163,7 @@ import numpy as np
 import scipy.optimize as so
 import scipy.integrate as si
 import bspline.base as bspline
-import projected_bspline as pb
+import src.projected_bspline as pb
 import total_curvature
 import viewport.viewport as vp
 

@@ -28,13 +28,6 @@ http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/B-spline/bspline-curve-
 このページが詳しいです.
 """
 import numpy as np
-from numba import jit, f8, i4
-
-bspline_spec = [
-    ("h", i4),
-    ("knots", f8[:]),
-    ("ctrls", f8[:, :])
-]
 
 class BSpline(object):
     """BSpline curve class.
@@ -137,8 +130,6 @@ class BSpline(object):
             self.ctrls
         )
 
-
-@jit(i4(f8[:], f8), nopython=True)
 def find_knots_index(knots, u):
     """ノットベクトルにおけるuの位置を探索します
 
@@ -154,8 +145,6 @@ def find_knots_index(knots, u):
             return i
     return -1
 
-
-@jit(f8[:](i4, i4, f8[:], f8), nopython=True, cache=True)
 def coefficients(n, p, knots, u):
     """Bスプライン係数を計算します。
 
@@ -194,12 +183,6 @@ def coefficients(n, p, knots, u):
         N[k] = (u - knots[k]) / (knots[k+d] - knots[k]) * N[k]
     return N
 
-
-
-value_locals = dict(coef=f8[:], result=f8[:])
-
-
-@jit(f8[:](i4, f8[:], f8[:, :], f8), nopython=True, locals=value_locals)
 def value(p, knots, ctrls, u):
     """Bスプライン曲線の位置を計算します
 

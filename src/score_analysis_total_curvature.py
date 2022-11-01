@@ -79,7 +79,7 @@ import csv
 import json
 import numpy as np
 import statsmodels.api as sm
-import total_curvature_analysis as tca
+import src.total_curvature_analysis as tca
 
 
 def load(filename):

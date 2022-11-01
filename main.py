@@ -1,6 +1,6 @@
-#p: 4, avarage_error: 0.001, lr: 1e-3
+#avarage_error: 0.001, lr: 1e-3
 import os
-from approximate_trajectories import approximate
+from src.approximate_trajectories import approximate
 
 target = os.listdir('csv')
 if len(target) < 1:
@@ -11,5 +11,5 @@ else:
         t = t.replace('.csv', '')
         ipath = f'csv/{t}.csv'
         opath = f'json/{t}.json'
-        approximate(4, ipath, opath, 0.001, 1e-3)
+        approximate(ipath, opath, 0.001, 1e-3)
         print('done')

@@ -8,9 +8,7 @@ B-spline関数は、
 それらのアルゴリズムを提供します.
 """
 import numpy as np
-from numba import jit, f8, i4
-from bspline.base import BSpline
-
+from .base import BSpline
 
 def subdivide(bspline, t):
     """軌道の関数を指定された位置で分割します.
@@ -37,7 +35,6 @@ def subdivide(bspline, t):
         BSpline(bspline.h, divided_knots[1], divided_ctrlss[1])
     )
 
-
 def subdivide_knot(bspline, t, k=None):
     """指定された位置で軌道を分割した場合におけるノットを計算.
 
@@ -57,7 +54,6 @@ def subdivide_knot(bspline, t, k=None):
         np.hstack((bspline.knots[:k+1], edge)),
         np.hstack((edge, bspline.knots[k+1:]))
     )
-
 
 def subdivide_ctrl_points(bspline, t, k=None):
     """軌道を指定位置において分割した場合における制御点を計算.
@@ -88,7 +84,6 @@ def subdivide_ctrl_points(bspline, t, k=None):
         Ps[1].append(P[i])
     return np.array(Ps[0]), np.array(Ps[1])
 
-
 def create_deboor_net(bspline, t, k):
     """deBoorのアルゴリズムで表される、netを計算します.
 
@@ -118,8 +113,6 @@ def create_deboor_net(bspline, t, k):
                         a[r][i] * Ps[r - 1][i])
     return Ps
 
-
-@jit(i4(f8[:], f8), nopython=True)
 def calc_divide_index(knots, t):
     """軌道分割における，どの部分にノットを差し込むかを表すindexを計算します.
 
