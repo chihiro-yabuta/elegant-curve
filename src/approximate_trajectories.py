@@ -161,7 +161,7 @@ def write_result(original, param, p, knots, ctrls, output):
         with open(output, "w") as f:
             f.write(dst_string)
 
-def approximate(ipath, opath, average_error, lr):
+def approximate(ipath, apath, average_error, lr):
     """Approximate a trajectory.
 
     B-spline関数の次数、入力ファイルパス、出力ファイルパスをもとに近似を行います.
@@ -190,5 +190,5 @@ def approximate(ipath, opath, average_error, lr):
         lspia.get_degree(),
         lspia.get_knot_vector(),
         lspia.get_control_points(),
-        opath
+        apath
     )

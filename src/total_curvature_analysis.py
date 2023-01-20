@@ -156,6 +156,7 @@ Options:
     -h, --help  Show this help
 """
 import json
+import csv
 import numpy as np
 from tqdm import tqdm
 import scipy.optimize as so
@@ -493,7 +494,7 @@ def build_bspline(bspline_dict):
         np.array(bspline_dict["control_point"])
     )
 
-def analyze_curvature(opath, rpath):
+def analyze_curvature(apath, bpath, rpath):
     """main関数
 
     Args:
@@ -501,43 +502,23 @@ def analyze_curvature(opath, rpath):
         output_arg (str): 出力ファイルもしくはディレクトリ
     """
     global cr_num
-    json_data = load_json(opath)
+    json_data = load_json(apath)
+    param = json_data['bspline']['parameter']
     traj_func = SecondDimensionalize(
         ProjectedBSpline(
             build_bspline(json_data["bspline"]),
-            get_viewport_axis(opath)
+            get_viewport_axis(apath)
         )
     )
+
+    pbb = ProjectedBSpline(build_bspline(json_data['bspline']),get_viewport_axis(apath))
+    with open(bpath, 'w', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        for i in range(len(param)):
+            writer.writerow(pbb(param[i]))
 
     result = analysis(traj_func)
     result["axis"] = traj_func.func.axis.tolist()
     json_data["total_curvature_analysis"] = result
     with open(rpath, "w", encoding="utf-8") as f:
         json.dump(json_data, f, sort_keys=True, indent=4)
-
-    print(json_data.get("total_curvature"))
-    '''
-    count = 0
-    print("変曲点の数 " + str(len(json_data["total_curvature_analysis"]["inflection_points"])))
-    henkyokuten = len(json_data["total_curvature_analysis"]["inflection_points"])
-    print("cr_num" + str(cr_num))
-    for i in range(henkyokuten-2):
-        for j in range(henkyokuten-1):
-            if(count % 4 ==0):
-                print(" ")
-            print(str(json_data["total_curvature_analysis"]["curves"][3]["arcs"][1]["trim_length"]) + " & ", end='')
-            count += 2
-    '''
-    #print(str(len(["inflection_points"][i])))
-    # print(json_data["total_curvature_analysis"]["curves"][0]["arcs"][0]["original_length"])
-    #print(json_data["total_curvature_analysis"]["curves"])
-    '''
-    dst_string = json.dumps(json_data, sort_keys=True, indent=4)
-    if o is None:
-        print(dst_string)
-    else:
-        if not os.path.exists(os.path.dirname(o)):
-            os.makedirs(os.path.dirname(o))
-        with open(o, "w") as f:
-            f.write(dst_string)
-    '''
