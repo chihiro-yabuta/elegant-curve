@@ -4,21 +4,6 @@
 >https://qiita.com/chihiro-yabuta/items/72e4a1869e9196ca9a67
 
 ## 詳細な説明が必要な方（上田研の方
-### Step0: csvファイル、ディレクトリを準備しましょう
-下記に従って用意して下さい<br>
-データの準備の仕方は先輩や先生に聞いて下さい
-
-<pre>
-.
-├── archive
-│   ├── *.csv (実行されないファイルです 直接置いてもいいですが、その場合 .gitignoreを追記する必要があります)
-├── csv
-│   ├── *.csv (実行されるファイルです)
-├── json
-│   ├── *.json (jsonファイルがここに出力されます)
-├── result
-│   ├── *.json (評価結果がここに出力されます)
-</pre>
 
 ### Step1: docker をインストールしましょう
 ここからdockerをインストールします
@@ -53,12 +38,24 @@ git clone https://github.com/chihiro-yabuta/elegant-curve.git
 cloneしたディレクトリを開いて
 
 ```
-docker compose up -d
+make
 ```
 
 を叩きましょう
 
 ![build](git/build.png)
+
+また、以下のようなディレクトリが出来ているのでinputに実行したいcsvを入れましょう
+
+<pre>
+.
+├── archive
+│   ├── * (計算過程のデータが格納されます)
+├── input
+│   ├── *.csv (実行されるファイルです)
+├── output
+│   ├── *.csv (結果がここに出力されます)
+</pre>
 
 立ち上がったらcontainerにattachしましょう
 
