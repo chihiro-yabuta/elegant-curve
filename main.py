@@ -1,4 +1,6 @@
 avarage_error, lr = 0.001, 1e-3 #自由に変えて下さい 初期値: 0.001, 1e-3
+#途中で絶対止まるのでファイルは１個ずつ実行すること
+#outputは直で上書きするので都度削除すること
 
 import os
 from src.approximate_trajectories import approximate
